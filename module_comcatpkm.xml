@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_comcatpkm" default="compile.module.comcatpkm">
+  <dirname property="module.comcatpkm.basedir" file="${ant.file.module_comcatpkm}"/>
+  
+  <property name="module.jdk.home.comcatpkm" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.comcatpkm" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.comcatpkm" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.comcatpkm" value="${compiler.args}"/>
+  
+  <property name="comcatpkm.output.dir" value="${module.comcatpkm.basedir}/WebContent/WEB-INF/classes"/>
+  <property name="comcatpkm.testoutput.dir" value="${module.comcatpkm.basedir}/target/test-classes"/>
+  
+  <path id="comcatpkm.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="comcatpkm.module.production.classpath">
+    <path refid="${module.jdk.classpath.comcatpkm}"/>
+    <path refid="library.tomcat_7.0.classpath"/>
+    <path refid="library.antlr-2.7.7.classpath"/>
+  </path>
+  
+  <path id="comcatpkm.runtime.production.module.classpath">
+    <pathelement location="${comcatpkm.output.dir}"/>
+    <path refid="library.antlr-2.7.7.classpath"/>
+  </path>
+  
+  <path id="comcatpkm.module.classpath">
+    <pathelement location="${comcatpkm.output.dir}"/>
+    <path refid="${module.jdk.classpath.comcatpkm}"/>
+    <path refid="library.tomcat_7.0.classpath"/>
+    <path refid="library.antlr-2.7.7.classpath"/>
+  </path>
+  
+  <path id="comcatpkm.runtime.module.classpath">
+    <pathelement location="${comcatpkm.testoutput.dir}"/>
+    <pathelement location="${comcatpkm.output.dir}"/>
+    <path refid="library.tomcat_7.0.classpath"/>
+    <path refid="library.antlr-2.7.7.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.comcatpkm">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.comcatpkm">
+    <patternset refid="excluded.from.module.comcatpkm"/>
+  </patternset>
+  
+  <path id="comcatpkm.module.sourcepath">
+    <dirset dir="${module.comcatpkm.basedir}">
+      <include name="resource"/>
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.comcatpkm" depends="compile.module.comcatpkm.production,compile.module.comcatpkm.tests" description="Compile module ComcatPKM"/>
+  
+  <target name="compile.module.comcatpkm.production" depends="register.custom.compilers" description="Compile module ComcatPKM; production classes">
+    <mkdir dir="${comcatpkm.output.dir}"/>
+    <javac2 destdir="${comcatpkm.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.comcatpkm}/javac">
+      <compilerarg line="${compiler.args.comcatpkm}"/>
+      <bootclasspath refid="comcatpkm.module.bootclasspath"/>
+      <classpath refid="comcatpkm.module.production.classpath"/>
+      <src refid="comcatpkm.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.comcatpkm"/>
+    </javac2>
+    
+    <copy todir="${comcatpkm.output.dir}">
+      <fileset dir="${module.comcatpkm.basedir}/resource">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.comcatpkm.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.comcatpkm.tests" depends="register.custom.compilers,compile.module.comcatpkm.production" description="compile module ComcatPKM; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.comcatpkm" description="cleanup module">
+    <delete dir="${comcatpkm.output.dir}"/>
+    <delete dir="${comcatpkm.testoutput.dir}"/>
+  </target>
+</project>
